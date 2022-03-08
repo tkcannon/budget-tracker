@@ -2,7 +2,7 @@ const CACHE_NAME = 'BudgetTracker-v1';
 const FILES_TO_CACHE = [
   "/",
   "/index.html",
-  "manifest.json",
+  "/manifest.json",
   "/css/styles.css",
   "/js/index.js",
   "/js/idb.js",
@@ -42,9 +42,28 @@ self.addEventListener('activate', function (event) {
 
 self.addEventListener('fetch', function (event) {
   console.log({ 'fetchEvent': event });
+  if (event.request.url.includes('/api')) {
+    event.respondWith(
+      caches.open(CACHE_NAME)
+        .then(cache => {
+          return fetch(event.request)
+            .then(res => {
+              if (res.status === 200) {
+                cache.put(event.request.url, res.clone());
+              }
+              return res;
+            })
+            .catch(err => {
+              return cache.match(event.request);
+            })
+        })
+        .catch(err => console.log(err))
+    )
+    return;
+  }
   event.respondWith(
-    caches.match(event.request).then(function (req) {
-      return req || fetch(event.req);
+    caches.match(event.request).then(function (request) {
+      return request || fetch(event.request);
     })
   )
 })
