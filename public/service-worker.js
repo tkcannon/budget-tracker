@@ -24,3 +24,27 @@ self.addEventListener('install', function (event) {
     })
   );
 })
+
+self.addEventListener('activate', function (event) {
+  console.log({ 'activateEvent': event });
+  event.waitUntil(caches.keys().then(keyList => {
+    console.log({ 'caches': caches }, { 'keyList': keyList });
+    return Promise.all(
+      keyList.map(key => {
+        if (key !== CACHE_NAME) {
+          console.log('Removing old cache', key);
+          return caches.delete(key);
+        }
+      })
+    )
+  }))
+})
+
+self.addEventListener('fetch', function (event) {
+  console.log({ 'fetchEvent': event });
+  event.respondWith(
+    caches.match(event.request).then(function (req) {
+      return req || fetch(event.req);
+    })
+  )
+})
