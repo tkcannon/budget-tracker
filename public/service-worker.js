@@ -1,4 +1,5 @@
 const CACHE_NAME = 'BudgetTracker-v1';
+
 const FILES_TO_CACHE = [
   "/",
   "/index.html",
