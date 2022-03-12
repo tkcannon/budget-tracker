@@ -1,4 +1,5 @@
 const CACHE_NAME = 'BudgetTracker-v1';
+const DATA_CACHE_NAME = 'data-cache-v1';
 
 const FILES_TO_CACHE = [
   "/",
@@ -32,7 +33,7 @@ self.addEventListener('activate', function (event) {
     console.log({ 'caches': caches }, { 'keyList': keyList });
     return Promise.all(
       keyList.map(key => {
-        if (key !== CACHE_NAME) {
+        if (key !== CACHE_NAME && key !== DATA_CACHE_NAME) {
           console.log('Removing old cache', key);
           return caches.delete(key);
         }
@@ -45,7 +46,8 @@ self.addEventListener('fetch', function (event) {
   console.log({ 'fetchEvent': event });
   if (event.request.url.includes('/api')) {
     event.respondWith(
-      caches.open(CACHE_NAME)
+      caches
+        .open(DATA_CACHE_NAME)
         .then(cache => {
           return fetch(event.request)
             .then(res => {
