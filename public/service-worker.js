@@ -1,8 +1,9 @@
 const CACHE_NAME = 'BudgetTracker-v1';
+
 const FILES_TO_CACHE = [
   "/",
   "/index.html",
-  "manifest.json",
+  "/manifest.json",
   "/css/styles.css",
   "/js/index.js",
   "/js/idb.js",
